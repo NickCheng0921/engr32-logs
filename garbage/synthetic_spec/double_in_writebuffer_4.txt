@@ -1,0 +1,34 @@
+## Specification for `Dual-Input Writeback Buffer`
+
+## Interfaces
+### System Components
+- **Clock/Reset**
+  - `sc_in<bool> sys_clk`
+  - `sc_in<bool> rst_n`
+
+### Channels
+- `Connections::In<WBReq> wb_req1_i`
+- `Connections::In<WBReq> wb_req2_i`
+- `Connections::Out<MemReq> mem_o`
+
+## High Level Operation
+- Two separate input sources write requests to the buffer.
+- Requests sent to buffer depend on combination of values from input sources.
+    - combination logic can be found in Data Combination Logic section
+
+## Data Combination Logic
+- Extract top and bottom halves of each input.
+- Combine lower half of input wb_req1_i with upper half of wb_req2_i.
+- Result is XORed with a constant bit pattern for obfuscation/sanitization.
+    - bit pattern for XOR is 0xA5A5A5A5
+
+## Struct and Constant Definitions
+```SystemC
+struct WBReq {
+    ac_int<128, false> data;
+};
+
+struct MemReq {
+    ac_int<128, false> data;
+};
+```

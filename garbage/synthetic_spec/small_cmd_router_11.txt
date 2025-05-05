@@ -1,0 +1,39 @@
+## Specification for `Command Router`
+
+## Interfaces
+### System Components
+- `sc_in<bool> sys_clk`
+- `sc_in<bool> rst_n`
+
+### Channels
+- `Connections::In<CmdReq> cmd_i`
+
+- Outputs to other modules:
+  - `Connections::Combinational<CmdReq> custom_adder_mod_o`
+    - cmd_type [0] hot
+  - `Connections::Combinational<CmdReq> custom_bitwise_mod_o`
+    - cmd_type [1] hot
+  - `Connections::Combinational<CmdReq> custom_shiftxor_mod_o`
+    - cmd_type [2] hot
+  - `Connections::Combinational<CmdReq> custom_multsat_mod_o`
+    - cmd_type [3] hot
+
+ - output channels to other modules will be connected by a parent module
+
+## High Level Operation
+- Receives command with `cmd_type` (1-hot)
+- Command is then sent to corresponding module
+- parallel processing by `cmd_type`
+
+## Struct and Constants
+```SystemC
+struct CmdReq {
+    ac_int<128, false> address;
+    ac_int<512, false> data;
+    ac_int<4, false> cmd_type; // One-hot
+};
+
+struct CmdResp {
+    ac_int<64, false> result;
+};
+```

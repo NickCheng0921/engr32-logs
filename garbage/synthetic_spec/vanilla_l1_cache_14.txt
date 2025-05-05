@@ -1,0 +1,51 @@
+## Specification for `L1 Cache`
+
+## Interfaces
+### System Components
+- **Clock/Reset**
+  - `sc_in<bool> sys_clk`
+  - `sc_in<bool> rst_n`
+
+### Channels
+- `Connections::In<CacheReq> cpu_req_i`
+- `Connections::Out<CacheResp> cpu_resp_o`
+- `Connections::Out<MemReq> mem_req_o`
+- `Connections::In<MemResp> mem_resp_i`
+
+## High Level Operation
+- A direct-mapped, write-through L1 cache.
+- If the line is present and tag matches, return data.
+- On a miss, fetch from memory and update line.
+
+### Address Breakdown (512-bit address)
+- Line size: **64 bytes** -> offset: **6 bits**
+- Cache lines: **128** -> index: **7 bits**
+- Remaining bits for tag: **499 bits**
+
+| Field     | Bits                      | Purpose                  |
+|-----------|---------------------------|--------------------------|
+| Offset    | [ 0:5 ]   | Byte in block            |
+| Index     | [ 6:12 ]     | Selects cache line       |
+| Tag       | [ 13:511 ]         | Compared to stored tag   |
+
+## Struct and Constant Definitions
+```SystemC
+struct CacheReq {
+    ac_int<512, false> addr;
+    ac_int<512, false> data;
+    bool write;
+};
+
+struct CacheResp {
+    ac_int<512, false> data;
+    bool valid;
+};
+
+struct MemReq {
+    ac_int<512, false> addr;
+};
+
+struct MemResp {
+    ac_int<512, false> data;
+};
+```

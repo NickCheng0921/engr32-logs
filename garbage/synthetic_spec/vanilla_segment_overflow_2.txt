@@ -1,0 +1,28 @@
+Specification for Segment Overflow Module
+
+## Interfaces
+### System Components
+- **Clock/Reset**
+    - `sc_in<bool> sys_clk`
+    - `sc_in<rst_n> rst_n`
+
+### Channels
+- `Connections::In<Struct_A> data_i`
+- `Connections::Out<Struct_B> data_o`
+
+## High Level Operation
+- The module adds two 32-bit segments of the input data field and checks for overflow. It then sets a 3-bit status code in the output based on result conditions.
+ - status code conditions can be found in the Struct and Constant Definitions section
+ - address field is unused
+
+## Struct and Constant Definitions
+```SystemC
+struct Struct_A {
+    ac_int<256, false> address;
+    ac_int<64, false> data;
+};
+
+struct Struct_B {
+    ac_int<3, false> status; // [0] = overflow flag, [1] = equality flag, [2] = enable flag
+};
+```

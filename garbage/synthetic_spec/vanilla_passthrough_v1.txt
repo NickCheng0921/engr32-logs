@@ -1,0 +1,21 @@
+Specification for Passthrough Module
+
+## Interfaces
+### System Components
+- **Clock/Reset**
+    - `sc_in<bool> sys_clk`
+    - `sc_in<rst_n> rst_n`
+
+### Channels
+- `Connections::In<Struct_A> data_i`
+- `Connections::Out<Struct_A> data_o`
+
+## High Level Operation
+- the module reads a single input transaction and passes it through to the output unchanged. This module can be used for sanity pipeline validation or buffering.
+
+## Struct and Constant Definitions
+```SystemC
+struct Struct_A {
+    ac_int<64, false> address;
+}
+```
